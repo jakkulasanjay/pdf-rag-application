@@ -9,7 +9,7 @@ from sentence_transformers import SentenceTransformer
 from transformers import pipeline
 
 
-st.title("📚 PDF RAG Application")
+st.title("📚 Simple and Smart PDF RAG Application")
 
 
 # Load models
