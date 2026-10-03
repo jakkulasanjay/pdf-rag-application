@@ -175,11 +175,10 @@ if uploaded_file is not None:
 
 
         best_distance=[0][0]
-     
         if best_distance > 1.0:
-         st.warning("This question is out of pdf ask question realted to pdf only")
-         st.stop()
-
+            st.warning("The information is not available in the provided document.")
+            st.stop()
+     
          
          
         # -----------------------------
