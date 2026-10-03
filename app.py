@@ -171,7 +171,7 @@ if uploaded_file is not None:
             question_emd,
             k
         )
-        print("Distances:", distance)
+        print("Distances:", distance[0])
 
         # -----------------------------
         # Retrieve documents
