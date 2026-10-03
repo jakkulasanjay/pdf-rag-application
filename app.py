@@ -174,7 +174,7 @@ if uploaded_file is not None:
         st.write("Distances:", distance[0])
 
 
-        best_distance=[0][0]
+        best_distance=distance[0][0]
         if best_distance > 1.0:
             st.warning("The information is not available in the provided document.")
             st.stop()
