@@ -1,4 +1,4 @@
-
+ 
 import streamlit as st
 import numpy as np
 import faiss
@@ -192,31 +192,31 @@ if uploaded_file is not None:
         # Prompt
         # -----------------------------
 
-        prompt = f"""
-You are a document question-answering assistant.
+     prompt = f"""
+You are a strict document question-answering assistant.
 
-Answer the user's question ONLY using the provided context.
+Your task is to answer the question ONLY from the CONTEXT provided below.
 
-Rules:
-1. Do not use outside knowledge.
-2. Do not make up information.
-3. If the answer is not present in the context, say:
+IMPORTANT RULES:
+1. The CONTEXT is your only source of information.
+2. Do NOT use your own knowledge or information from outside the CONTEXT.
+3. Do NOT guess, infer, assume, or complete missing information.
+4. If the answer is not explicitly supported by the CONTEXT, respond exactly:
 "The information is not available in the provided document."
-4. Give a clear and concise answer.
-5. Use simple language.
+5. If the question is completely unrelated to the CONTEXT, respond exactly:
+"The information is not available in the provided document."
+6. Even if you know the answer from your general knowledge, DO NOT answer it.
+7. Keep the answer clear and concise.
+8. Answer only what the user asked.
 
-Context:
-
+CONTEXT:
 {content}
 
-Question:
-
+QUESTION:
 {question}
 
-Answer:
+ANSWER:
 """
-
-
         # -----------------------------
         # Generate answer
         # -----------------------------
