@@ -64,6 +64,7 @@ if uploaded_file is not None:
     document = []
     chunk_size = 500
     temp_chunk = ""
+
     for page in pages:
         page_text = page["text"]
 
@@ -71,26 +72,25 @@ if uploaded_file is not None:
         r'(?<=[.!?])\s+',
         page_text)
    
-    for sentence in sentences:
+        for sentence in sentences:
+            if len(sentence) + len(temp_chunk) <= chunk_size:
 
-        if len(sentence) + len(temp_chunk) <= chunk_size:
+               temp_chunk += sentence + " "
 
-            temp_chunk += sentence + " "
+            else:
 
-        else:
+                 if temp_chunk:
+                  
+                    document.append(
+                    temp_chunk.strip()   )
 
-            if temp_chunk:
-                document.append(
+                    temp_chunk = sentence + " "
+
+
+                 if temp_chunk:
+                    document.append(
                     temp_chunk.strip()
-                )
-
-            temp_chunk = sentence + " "
-
-
-    if temp_chunk:
-        document.append(
-            temp_chunk.strip()
-        )
+                      )
 
 
     st.success(
