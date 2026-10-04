@@ -98,7 +98,8 @@ if uploaded_file is not None:
         f"Created {len(document)} chunks"
     )
 
-
+    st.write("Number of pages:", len(pages))
+    st.write("Number of chunks:", len(document))
     # -----------------------------
     # Create embeddings
     # -----------------------------
