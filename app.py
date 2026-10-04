@@ -193,8 +193,13 @@ if uploaded_file is not None:
             document[i]["text"]
             for i in indices[0]
         ]
-
-
+        retrieved_pages = [
+        document[i]["page"]
+        for i in indices[0]
+           ]
+        retrieved_pages = sorted(set(retrieved_pages))
+        st.write("Source: Page", retrieved_pages[0])
+     
         content = "\n\n".join(
             ret_doc
         )
