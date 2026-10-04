@@ -60,12 +60,13 @@ if uploaded_file is not None:
     # -----------------------------
     # Chunking
     # -----------------------------
+    for page in pages:
+        page_text = page["text"]
 
-    sentences = re.split(
+        sentences = re.split(
         r'(?<=[.!?])\s+',
-        page_text
-    )
-
+        page_text)
+   
     document = []
 
     chunk_size = 500
