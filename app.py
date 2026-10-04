@@ -44,18 +44,18 @@ if uploaded_file is not None:
     # -----------------------------
     # Extract text
     # -----------------------------
-
     reader = PdfReader(uploaded_file)
-
-    text = ""
-
-    for page in reader.pages:
-
+    #reader = PdfReader(uploaded_file)
+    pages = []
+    
+    for page_number, page in enumerate(reader.pages, start=1):
         page_text = page.extract_text()
 
         if page_text:
-            text += page_text + "\n"
-
+            pages.append({
+            "text": page_text,
+            "page": page_number
+             })
 
     # -----------------------------
     # Chunking
