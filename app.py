@@ -81,18 +81,18 @@ if uploaded_file is not None:
 
                  if temp_chunk:
                   
-                    document.append(
+                    document.append({
                     "text":temp_chunk.strip()   
-                    "page": page_number)
+                    "page": page_number})
 
                     temp_chunk = sentence + " "
 
 
         if temp_chunk:
-           document.append(
+           document.append({
                   "text":temp_chunk.strip()
                      "page": page_number
-                      )
+           })
 
 
     st.success(
