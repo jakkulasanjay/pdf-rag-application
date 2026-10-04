@@ -106,7 +106,8 @@ if uploaded_file is not None:
     # -----------------------------
 
     document_emd = embedding_model.encode(
-        document
+     [doc["text"] for doc in document]
+        
     )
 
     document_emd = np.array(
