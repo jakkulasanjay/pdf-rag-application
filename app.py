@@ -60,6 +60,10 @@ if uploaded_file is not None:
     # -----------------------------
     # Chunking
     # -----------------------------
+    
+    document = []
+    chunk_size = 500
+    temp_chunk = ""
     for page in pages:
         page_text = page["text"]
 
@@ -67,11 +71,6 @@ if uploaded_file is not None:
         r'(?<=[.!?])\s+',
         page_text)
    
-    document = []
-
-    chunk_size = 500
-    temp_chunk = ""
-
     for sentence in sentences:
 
         if len(sentence) + len(temp_chunk) <= chunk_size:
