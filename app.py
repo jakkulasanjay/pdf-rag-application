@@ -190,7 +190,7 @@ if uploaded_file is not None:
         # -----------------------------
 
         ret_doc = [
-            document[i]
+            document[i]["text"]
             for i in indices[0]
         ]
 
