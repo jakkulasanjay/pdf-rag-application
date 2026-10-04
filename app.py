@@ -67,7 +67,7 @@ if uploaded_file is not None:
 
     for page in pages:
         page_text = page["text"]
-
+        page_number=page["page"]
         sentences = re.split(
         r'(?<=[.!?])\s+',
         page_text)
@@ -82,14 +82,16 @@ if uploaded_file is not None:
                  if temp_chunk:
                   
                     document.append(
-                    temp_chunk.strip()   )
+                    "text":temp_chunk.strip()   
+                    "page": page_number)
 
                     temp_chunk = sentence + " "
 
 
         if temp_chunk:
            document.append(
-                    temp_chunk.strip()
+                  "text":temp_chunk.strip()
+                     "page": page_number
                       )
 
 
