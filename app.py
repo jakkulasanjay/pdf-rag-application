@@ -3,6 +3,7 @@ import streamlit as st
 import numpy as np
 import faiss
 import re
+from sentence_transformers import CrossEncoder
 
 from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
@@ -19,6 +20,9 @@ def load_models():
     embedding_model = SentenceTransformer(
         "all-MiniLM-L6-v2"
     )
+    reranker = CrossEncoder(
+    "cross-encoder/ms-marco-MiniLM-L-6-v2"
+)
 
     generate = pipeline(
         "text-generation",
@@ -26,10 +30,10 @@ def load_models():
         device=-1
     )
 
-    return embedding_model, generate
+    return embedding_model, reranker, generate
 
 
-embedding_model, generate = load_models()
+embedding_model, reranker, generate = load_models()
 
 
 # Upload PDF
@@ -93,6 +97,7 @@ if uploaded_file is not None:
                   "text":temp_chunk.strip(),
                      "page": page_number
            })
+           temp_chunk=""
 
 
     st.success(
@@ -169,15 +174,42 @@ if uploaded_file is not None:
         # Search
         # -----------------------------
 
-        k = min(5, len(document))
+        k = min(10, len(document))
 
         distance, indices = index.search(
             question_emd,
             k
         )
+     
+        candidate_docs = [
+           {
+        "text": document[i]["text"],
+        "page": document[i]["page"]
+        }
+        for i in indices[0]
+        ]
+
+        pairs = [
+         [question, doc["text"]]
+         for doc in candidate_docs
+        ]
+
+        #rerank_scores = reranker.predict(pairs)
+        rerank_scores = reranker.predict(pairs)
+       
         st.write("Distances:", distance[0])
-
-
+     
+        ranked_docs = sorted(
+        zip(rerank_scores, candidate_docs),
+        key=lambda x: x[0],
+        reverse=True
+         )
+     
+        top_docs = [
+        doc
+        for score, doc in ranked_docs[:3]
+            ]
+     
         best_distance=distance[0][0]
         if best_distance > 1.0:
             st.warning("The information is not available in the provided document.")
@@ -189,21 +221,19 @@ if uploaded_file is not None:
         # Retrieve documents
         # -----------------------------
 
+      
         ret_doc = [
-            document[i]["text"]
-            for i in indices[0]
-        ]
-        retrieved_pages = [
-        document[i]["page"]
-        for i in indices[0]
-           ]
-        retrieved_pages = sorted(set(retrieved_pages))
-        st.write("Source: Page", retrieved_pages[0])
-     
-        content = "\n\n".join(
-            ret_doc
+        doc["text"]
+        for doc in top_docs
+          ]
+
+        content = "\n\n".join(ret_doc)
+
+        retrieved_pages = sorted(
+        set(doc["page"] for doc in top_docs)
         )
 
+        st.write("Source pages:", retrieved_pages)
 
         # -----------------------------
         # Prompt
