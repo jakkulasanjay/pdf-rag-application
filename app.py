@@ -63,7 +63,7 @@ if uploaded_file is not None:
 
     sentences = re.split(
         r'(?<=[.!?])\s+',
-        text
+        page_text
     )
 
     document = []
