@@ -87,8 +87,8 @@ if uploaded_file is not None:
                     temp_chunk = sentence + " "
 
 
-                 if temp_chunk:
-                    document.append(
+        if temp_chunk:
+           document.append(
                     temp_chunk.strip()
                       )
 
