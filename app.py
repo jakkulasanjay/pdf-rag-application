@@ -225,7 +225,10 @@ if uploaded_file is not None:
          6. Even if you know the answer from your general knowledge, DO NOT answer it.
          7. Keep the answer clear and concise.
          8. Answer only what the user asked.
-
+         7. Give the answer in 2-4 clear sentences unless the question requires more detail.
+         8. Start directly with the answer. Do not repeat the question.
+         9. Do not include unrelated details, examples, applications, history, or explanations unless they are necessary to answer the question.
+         10. Use simple language that is easy to understand.
          CONTEXT:
          {content}
 
