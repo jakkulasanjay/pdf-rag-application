@@ -204,7 +204,7 @@ if uploaded_file is not None:
         key=lambda x: x[0],
         reverse=True
          )
-        st.write("rerankers_score:",reranker_scores)
+        st.write("rerankers_score:",rerank_scores)
         top_docs = [
         doc
         for score, doc in ranked_docs[:3]
