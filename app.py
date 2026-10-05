@@ -196,7 +196,7 @@ if uploaded_file is not None:
 
         #rerank_scores = reranker.predict(pairs)
         rerank_scores = reranker.predict(pairs)
-       
+        
         st.write("Distances:", distance[0])
      
         ranked_docs = sorted(
@@ -204,7 +204,7 @@ if uploaded_file is not None:
         key=lambda x: x[0],
         reverse=True
          )
-     
+        st.write("rerankers_score:",reranker_scores)
         top_docs = [
         doc
         for score, doc in ranked_docs[:3]
