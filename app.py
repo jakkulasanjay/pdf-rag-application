@@ -296,6 +296,9 @@ if uploaded_file is not None:
 
         st.write("Source pages:", retrieved_pages)
 
+        with st.expander("Debug: Retrieved context"):
+        st.write(content)
+     
         # -----------------------------
         # Prompt
         # -----------------------------
