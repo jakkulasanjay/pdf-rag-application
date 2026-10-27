@@ -303,34 +303,25 @@ if uploaded_file is not None:
         # Prompt
         # -----------------------------
 
-        prompt = f"""
-        You are a strict document question-answering assistant.
+        prompt = f"""Answer the question using the document context.
 
-         Your task is to answer the question ONLY from the CONTEXT provided below.
+        Instructions:
+          - Include the important details that directly answer the question.
+          - Use only information supported by the context.
+          - Explain the answer clearly in simple language.
+          - Do not repeat the question or copy unrelated text.
+          - If the context does not contain enough information, say:
+          "The information is not available in the provided document."
 
-         IMPORTANT RULES:
-         1. The CONTEXT is your only source of information.
-         2. Do NOT use your own knowledge or information from outside the CONTEXT.
-         3. Do NOT guess, infer, assume, or complete missing information.
-         4. If the answer is not explicitly supported by the CONTEXT, respond exactly:
-            "The information is not available in the provided document."
-         5. If the question is completely unrelated to the CONTEXT, respond exactly:
-            "The information is not available in the provided document."
-         6. Even if you know the answer from your general knowledge, DO NOT answer it.
-         7. Keep the answer clear and concise.
-         8. Answer only what the user asked.
-         7. Give the answer in 2-4 clear sentences unless the question requires more detail.
-         8. Start directly with the answer. Do not repeat the question.
-         9. Do not include unrelated details, examples, applications, history, or explanations unless they are necessary to answer the question.
-         10. Use simple language that is easy to understand.
-         CONTEXT:
-         {content}
+          Document context:
+          {content}
 
-         QUESTION:
-         {question}
+          Question: {question}
 
-         ANSWER:
-         """
+          Answer:"""
+
+      
+     
         # -----------------------------
         # Generate answer
         # -----------------------------
@@ -339,12 +330,14 @@ if uploaded_file is not None:
 
             result = generate(
                 prompt,
-                max_new_tokens=100,
+                max_new_tokens=200,
+                do_sample=False,
+             
                 return_full_text=False
             )
 
 
-        answer = result[0]["generated_text"]
+        answer = result[0]["generated_text"].strip()
 
 
         # -----------------------------
