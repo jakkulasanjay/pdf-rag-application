@@ -27,7 +27,8 @@ def load_models():
 
     generate = pipeline(
         "text-generation",
-        model="HuggingFaceTB/SmolLM2-360M-Instruct",
+            model="Qwen/Qwen2.5-1.5B-Instruct",
+
         device=-1
     )
 
