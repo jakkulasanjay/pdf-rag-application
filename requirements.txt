@@ -7,3 +7,4 @@ transformers
 torch
 numpy
 rank-bm25
+transformers>=4.37.0
