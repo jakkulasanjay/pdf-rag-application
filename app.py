@@ -2,6 +2,7 @@
 import streamlit as st
 import numpy as np
 import faiss
+from rank_bm25 import BM25Okapi
 import re
 from sentence_transformers import CrossEncoder
 
@@ -107,6 +108,20 @@ if uploaded_file is not None:
     st.write("Number of pages:", len(pages))
     st.write("Number of chunks:", len(document))
     # -----------------------------
+# Create BM25 keyword index
+# -----------------------------
+
+    tokenized_documents = [
+    re.findall(r"\b\w+\b", doc["text"].lower())
+    for doc in document
+    ]
+
+    if not document:
+         st.warning("No extractable text found in this PDF.")
+         st.stop()
+
+    bm25 = BM25Okapi(tokenized_documents)
+    # -----------------------------
     # Create embeddings
     # -----------------------------
 
@@ -174,48 +189,92 @@ if uploaded_file is not None:
         # Search
         # -----------------------------
 
+        
+        # -----------------------------
+        # Hybrid Search: FAISS + BM25
+        # -----------------------------
+
         k = min(10, len(document))
 
-        distance, indices = index.search(
-            question_emd,
-            k
-        )
-     
-        candidate_docs = [
-           {
+        # 1. Dense retrieval using FAISS
+        distances, dense_indices = index.search(
+             question_emd,
+             k
+           )
+
+        # 2. Keyword retrieval using BM25
+        query_tokens = re.findall(
+          r"\b\w+\b",
+         question.lower()
+           )
+
+        bm25_scores = bm25.get_scores(query_tokens)
+
+        keyword_indices = np.argsort(bm25_scores)[::-1][:k]
+
+        # 3. Combine rankings using Reciprocal Rank Fusion (RRF)
+        rrf_scores = {}
+        rrf_constant = 60
+
+       for rank, idx in enumerate(dense_indices[0], start=1):
+           idx = int(idx)
+           rrf_scores[idx] = rrf_scores.get(idx, 0) + (
+            1 / (rrf_constant + rank)
+            )
+
+       for rank, idx in enumerate(keyword_indices, start=1):
+    idx = int(idx)
+    rrf_scores[idx] = rrf_scores.get(idx, 0) + (
+        1 / (rrf_constant + rank)
+    )
+
+    # 4. Select the combined candidate set
+    candidate_indices = sorted(
+    rrf_scores,
+    key=rrf_scores.get,
+    reverse=True
+     )[:10]
+
+    candidate_docs = [
+    {
         "text": document[i]["text"],
-        "page": document[i]["page"]
-        }
-        for i in indices[0]
-        ]
+        "page": document[i]["page"],
+        "chunk_id": i
+    }
+    for i in candidate_indices
+    ]
 
-        pairs = [
-         [question, doc["text"]]
-         for doc in candidate_docs
-        ]
+# 5. Rerank candidates using CrossEncoder
+    pairs = [
+    [question, doc["text"]]
+    for doc in candidate_docs
+     ]
 
-        #rerank_scores = reranker.predict(pairs)
-        rerank_scores = reranker.predict(pairs)
-        
-        st.write("Distances:", distance[0])
-     
-        ranked_docs = sorted(
-        zip(rerank_scores, candidate_docs),
-        key=lambda x: x[0],
-        reverse=True
-         )
-        st.write("rerankers_score:",rerank_scores)
-        top_docs = [
-        doc
-        for score, doc in ranked_docs[:3]
-            ]
-     
-        best_distance=distance[0][0]
-        if best_distance > 1.0:
-            st.warning("The information is not available in the provided document.")
-            st.stop()
-     
-         
+    rerank_scores = reranker.predict(pairs)
+
+    ranked_docs = sorted(
+    zip(rerank_scores, candidate_docs),
+    key=lambda x: float(x[0]),
+    reverse=True
+       )
+
+    # 6. Select the top three chunks
+    top_docs = [
+    doc for score, doc in ranked_docs[:3]
+    ]
+
+    # Debug information
+    st.write("FAISS distances:", distances[0])
+    st.write("BM25 top scores:", bm25_scores[keyword_indices])
+    st.write("Reranker scores:", [
+    float(score) for score, doc in ranked_docs
+      ])
+
+    st.write(
+    "Retrieved chunk IDs:",
+    [doc["chunk_id"] for doc in top_docs]
+     )
+ 
          
         # -----------------------------
         # Retrieve documents
