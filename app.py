@@ -218,13 +218,13 @@ if uploaded_file is not None:
 
         for rank, idx in enumerate(dense_indices[0], start=1):
              idx = int(idx)
-              rrf_scores[idx] = rrf_scores.get(idx, 0) + (
+             rrf_scores[idx] = rrf_scores.get(idx, 0) + (
                  1 / (rrf_constant + rank)
              )
 
         for rank, idx in enumerate(keyword_indices, start=1):
              idx = int(idx)
-                 rrf_scores[idx] = rrf_scores.get(idx, 0) + (
+             rrf_scores[idx] = rrf_scores.get(idx, 0) + (
                1 / (rrf_constant + rank)
              )
 
