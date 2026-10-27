@@ -107,6 +107,8 @@ if uploaded_file is not None:
 
     st.write("Number of pages:", len(pages))
     st.write("Number of chunks:", len(document))
+
+ 
     # -----------------------------
 # Create BM25 keyword index
 # -----------------------------
@@ -121,6 +123,8 @@ if uploaded_file is not None:
          st.stop()
 
     bm25 = BM25Okapi(tokenized_documents)
+
+ 
     # -----------------------------
     # Create embeddings
     # -----------------------------
@@ -185,9 +189,7 @@ if uploaded_file is not None:
         )
 
 
-        # -----------------------------
-        # Search
-        # -----------------------------
+        
 
         
         # -----------------------------
