@@ -331,7 +331,7 @@ if uploaded_file is not None:
             result = generate(
                 prompt,
                 max_new_tokens=200,
-                do_sample=False,
+               # do_sample=False,
              
                 return_full_text=False
             )
