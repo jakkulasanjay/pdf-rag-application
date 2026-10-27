@@ -216,64 +216,64 @@ if uploaded_file is not None:
         rrf_scores = {}
         rrf_constant = 60
 
-       for rank, idx in enumerate(dense_indices[0], start=1):
-           idx = int(idx)
-           rrf_scores[idx] = rrf_scores.get(idx, 0) + (
-            1 / (rrf_constant + rank)
-            )
+        for rank, idx in enumerate(dense_indices[0], start=1):
+             idx = int(idx)
+              rrf_scores[idx] = rrf_scores.get(idx, 0) + (
+                 1 / (rrf_constant + rank)
+             )
 
-       for rank, idx in enumerate(keyword_indices, start=1):
-    idx = int(idx)
-    rrf_scores[idx] = rrf_scores.get(idx, 0) + (
-        1 / (rrf_constant + rank)
-    )
+        for rank, idx in enumerate(keyword_indices, start=1):
+             idx = int(idx)
+                 rrf_scores[idx] = rrf_scores.get(idx, 0) + (
+               1 / (rrf_constant + rank)
+             )
 
-    # 4. Select the combined candidate set
-    candidate_indices = sorted(
-    rrf_scores,
-    key=rrf_scores.get,
-    reverse=True
-     )[:10]
+        # 4. Select the combined candidate set
+        candidate_indices = sorted(
+        rrf_scores,
+        key=rrf_scores.get,
+        reverse=True
+        )[:10]
 
-    candidate_docs = [
-    {
+        candidate_docs = [
+        {
         "text": document[i]["text"],
         "page": document[i]["page"],
         "chunk_id": i
-    }
-    for i in candidate_indices
-    ]
+        }
+        for i in candidate_indices
+         ]
 
-# 5. Rerank candidates using CrossEncoder
-    pairs = [
-    [question, doc["text"]]
-    for doc in candidate_docs
-     ]
+       # 5. Rerank candidates using CrossEncoder
+        pairs = [
+        [question, doc["text"]]
+        for doc in candidate_docs
+         ]
 
-    rerank_scores = reranker.predict(pairs)
+        rerank_scores = reranker.predict(pairs)
 
-    ranked_docs = sorted(
-    zip(rerank_scores, candidate_docs),
-    key=lambda x: float(x[0]),
-    reverse=True
-       )
+        ranked_docs = sorted(
+        zip(rerank_scores, candidate_docs),
+        key=lambda x: float(x[0]),
+        reverse=True
+         )
 
-    # 6. Select the top three chunks
-    top_docs = [
-    doc for score, doc in ranked_docs[:3]
-    ]
+        # 6. Select the top three chunks
+        top_docs = [
+        doc for score, doc in ranked_docs[:3]
+         ]
 
     # Debug information
-    st.write("FAISS distances:", distances[0])
-    st.write("BM25 top scores:", bm25_scores[keyword_indices])
-    st.write("Reranker scores:", [
-    float(score) for score, doc in ranked_docs
-      ])
+        st.write("FAISS distances:", distances[0])
+        st.write("BM25 top scores:", bm25_scores[keyword_indices])
+        st.write("Reranker scores:", [
+        float(score) for score, doc in ranked_docs
+        ])
 
-    st.write(
-    "Retrieved chunk IDs:",
-    [doc["chunk_id"] for doc in top_docs]
-     )
+        st.write(
+        "Retrieved chunk IDs:",
+          [doc["chunk_id"] for doc in top_docs]
+          )
  
          
         # -----------------------------
